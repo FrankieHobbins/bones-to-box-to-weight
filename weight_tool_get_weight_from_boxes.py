@@ -4,8 +4,15 @@ print ("---")
 
 selObj = bpy.context.selected_objects[0]
 
-bpy.ops.object.modifier_remove(modifier="DELETE_ME_WP")
-bpy.data.objects.remove(bpy.data.objects["DELETE_ME_WP"])
+try:
+    bpy.ops.object.modifier_remove(modifier="DELETE_ME_WP")
+except:
+    print("what")
+
+try:
+    bpy.data.objects.remove(bpy.data.objects["DELETE_ME_WP"])
+except:
+    print("what")
 
 #remove all vertex groups
 for group in selObj.vertex_groups:
@@ -44,3 +51,10 @@ bpy.ops.object.datalayout_transfer(modifier="DELETE_ME_WP")
 #enable use_paint_mask_vertex 
 #select all verts bpy.ops.paint.vert_select_all(action='TOGGLE')
 #loop all vert groups and do bpy.ops.object.vertex_group_smooth()
+
+bpy.ops.object.modifier_apply(apply_as='DATA', modifier="DELETE_ME_WP")
+
+bpy.ops.object.modifier_remove(modifier="DELETE_ME_WP")
+bpy.data.objects.remove(bpy.data.objects["DELETE_ME_WP"])
+
+# armature.pose_position = 'POSE'

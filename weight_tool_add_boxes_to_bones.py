@@ -4,6 +4,9 @@ print ("---")
 newObjectList = []
 
 armature = bpy.context.selected_objects[0].data
+#armature.pose_position = 'REST' dont need this if we parent box to bone
+
+#check mesh data for 
 
 for pose_bone in bpy.context.selected_pose_bones:
     #check to see if bone is deform bone
@@ -20,6 +23,16 @@ for pose_bone in bpy.context.selected_pose_bones:
                 bpy.ops.mesh.primitive_cube_add()
                 cube = bpy.context.selected_objects[0]    
                 cube.name = "WEIGHT_PROXY_" + pose_bone.name
+                cube.draw_type = 'WIRE'
+                
+                for mesh in bpy.data.meshes:
+                    if mesh.name == "WEIGHT_PROXY_" + pose_bone.name:
+                        cube.data = mesh
+
+                    else:
+                        cube.data.name = cube.name
+                        
+                cube.data.use_fake_user = True
                 cube.matrix_world = matrix_final
                 cube.scale = cube.scale * pose_bone_size * 0.3
                 bpy.ops.transform.translate(value= (0,pose_bone_size*0.5,0), constraint_axis=(False, True, False), constraint_orientation='LOCAL')
