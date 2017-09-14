@@ -4,15 +4,35 @@ print ("---")
 
 selObj = bpy.context.selected_objects[0]
 
+
+#sloppy way to add armature to object if not allready there
+hasArmature = False
+for mod in selObj.modifiers:
+    if mod.type == 'ARMATURE':
+        hasArmature = True
+        armature = mod.object
+        
+if hasArmature == False:
+    bpy.ops.object.modifier_add(type='ARMATURE')
+    for obj in bpy.data.objects:
+        if obj.type == 'ARMATURE':
+            selObj.modifiers['Armature'].object = obj
+            armature = obj
+            break
+
+armature.data.pose_position = 'REST'
+
+"""
 try:
     bpy.ops.object.modifier_remove(modifier="DELETE_ME_WP")
 except:
-    print("what")
+    print("--")
 
 try:
     bpy.data.objects.remove(bpy.data.objects["DELETE_ME_WP"])
 except:
-    print("what")
+    print("-")
+"""
 
 #remove all vertex groups
 for group in selObj.vertex_groups:
@@ -53,8 +73,7 @@ bpy.ops.object.datalayout_transfer(modifier="DELETE_ME_WP")
 #loop all vert groups and do bpy.ops.object.vertex_group_smooth()
 
 bpy.ops.object.modifier_apply(apply_as='DATA', modifier="DELETE_ME_WP")
-
 bpy.ops.object.modifier_remove(modifier="DELETE_ME_WP")
 bpy.data.objects.remove(bpy.data.objects["DELETE_ME_WP"])
 
-# armature.pose_position = 'POSE'
+armature.data.pose_position = 'POSE'
