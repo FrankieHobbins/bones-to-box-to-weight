@@ -204,7 +204,7 @@ class FBWTK(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.mode in {'OBJECT', 'EDIT_MESH'}
+        return context.mode in {'OBJECT', 'EDIT_ARMATURE', 'POSE'}
 
     bpy.types.Scene.fvctk_selection = bpy.props.BoolProperty(name="Selected verts only", default=False)
  
