@@ -40,11 +40,30 @@ def addBoxesToBones():
         
             # Add cube to bone with vertex weight named after bone and set to 1
             bpy.ops.mesh.primitive_cube_add()
-            cube = bpy.context.active_object  # Updated for Blender 3.0+
+            cube = bpy.context.active_object
             cube.name = "WEIGHT_PROXY_" + pose_bone.name
-            cube.display_type = 'WIRE'  # Updated for Blender 3.0+
+            cube.display_type = 'WIRE'
 
-            preexistingmesh = False 
+            # Check if the "WeightProxys" collection exists, if not, create it
+            collection_name = "WeightProxys*"
+            if collection_name not in bpy.data.collections:  # Check if the collection does not exist
+                new_collection = bpy.data.collections.new(collection_name)
+                bpy.context.scene.collection.children.link(new_collection)  # Link the new collection to the scene
+
+            # Get the collection
+            collection = bpy.data.collections[collection_name]
+
+            # Link the cube to the "WeightProxys" collection
+            if cube.name not in collection.objects:
+                # Unlink the cube from its current collection
+                for col in cube.users_collection:
+                    col.objects.unlink(cube)
+
+                # Link the cube to the "WeightProxys" collection
+                collection.objects.link(cube)
+
+
+            preexistingmesh = False
             for mesh in bpy.data.meshes:
                 if mesh.name == "WEIGHT_PROXY_" + pose_bone.name:
                     preexistingmesh = True
@@ -58,9 +77,10 @@ def addBoxesToBones():
             cube.parent_type = 'BONE'
             cube.parent_bone = pose_bone.name
             cube.location = (0,-pose_bone_size*0.5,0)
-            
-            vg = cube.vertex_groups.new(name=pose_bone.name)
-            vg.add(range(0, len(cube.data.vertices)), 1, "ADD")
+
+            if len(cube.vertex_groups) == 0:
+                vg = cube.vertex_groups.new(name=pose_bone.name)
+                vg.add(range(0, len(cube.data.vertices)), 1, "ADD")
             
             # Lock transforms
             bpy.context.object.lock_location = (True, True, True)
